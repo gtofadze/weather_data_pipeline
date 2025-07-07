@@ -7,10 +7,10 @@ class DataTransformer:
 
     RECORD_TYPE = {1: "Historic", 2: "Forecast"}
 
-    def __init__(self, response_historic_data, cities, cities_info, record_type):
+    def __init__(self, response_data, cities, cities_info, record_type):
         self.record_type = record_type
 
-        self.response_histiric_data = response_historic_data
+        self.response_data = response_data
 
         self.cities = cities
         self.cities_info = cities_info
@@ -20,7 +20,7 @@ class DataTransformer:
         self.combined_dataframe = 0  # combined dataframe of all cities
         self.transformed_dataframe = 0
 
-    def create_historic_dataframes(self):
+    def create_dataframes(self):
         data = self.response_histiric_data
         cities = self.cities
         cities_info = self.cities_info
