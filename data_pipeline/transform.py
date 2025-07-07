@@ -21,7 +21,7 @@ class DataTransformer:
         self.transformed_dataframe = 0
 
     def create_dataframes(self):
-        data = self.response_histiric_data
+        data = self.response_data
         cities = self.cities
         cities_info = self.cities_info
 
