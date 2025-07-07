@@ -23,3 +23,5 @@ def execute_data_pipeline():
     data_transformer.dfs[0].show(3)
     data_transformer.dfs[2].show(3)
     data_transformer.transformed_dataframe.show(50, truncate=False)
+
+execute_data_pipeline()
