@@ -8,8 +8,10 @@ from parameters import (
     forecast_data_base_url,
 )
 
+start_date = "2025-07-01"
+end_date = "2025-07-02"
 
-def execute_data_pipeline(record_type):
+def execute_data_pipeline(record_type, start_date, end_date):
 
     # for historic record type enter 1 for forecast enter 2 in "record_type" variable
 
@@ -19,7 +21,7 @@ def execute_data_pipeline(record_type):
         base_url = forecast_data_base_url
 
     extracted_data = extract_data(
-        cities_info, cities, base_url, params, "2025-07-01", "2025-07-02"
+        cities_info, cities, base_url, params, start_date, end_date
     )
 
     data_transformer = DataTransformer(extracted_data, cities, cities_info, record_type)
