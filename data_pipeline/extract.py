@@ -2,7 +2,7 @@ import requests
 from pprint import pprint
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import lit, col
+from pyspark.sql.functions import lit, col, round
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -16,7 +16,9 @@ cities_info = {
 
 cities = ["Tbilisi", "Batumi", "Zugdidi", "Kutaisi", "Gori"]
 
-base_url = "https://archive-api.open-meteo.com/v1/archive"
+historic_data_base_url = "https://archive-api.open-meteo.com/v1/archive"
+forecast_data_base_url = "https://api.open-meteo.com/v1/forecast"
+
 params = {
     "start_date": "2025-07-01",
     "end_date": "2025-07-02",
@@ -25,6 +27,37 @@ params = {
     "hourly": ["temperature_2m", "weather_code", "wind_speed_10m"],
     "timezone": "GMT",
     "temporal_resolution": "hourly_6",
+}
+
+weather_code_map = {
+    0: "Clear sky",
+    1: "Mainly clear",
+    2: "Partly cloudy",
+    3: "Overcast",
+    45: "Fog",
+    48: "Depositing rime fog",
+    51: "Light drizzle",
+    53: "Moderate drizzle",
+    55: "Dense drizzle",
+    56: "Light freezing drizzle",
+    57: "Dense freezing drizzle",
+    61: "Slight rain",
+    63: "Moderate rain",
+    65: "Heavy rain",
+    66: "Light freezing rain",
+    67: "Heavy freezing rain",
+    71: "Slight snow fall",
+    73: "Moderate snow fall",
+    75: "Heavy snow fall",
+    77: "Snow grains",
+    80: "Slight rain showers",
+    81: "Moderate rain showers",
+    82: "Violent rain showers",
+    85: "Slight snow showers",
+    86: "Heavy snow showers",
+    95: "Thunderstorm",
+    96: "Thunderstorm with slight hail",
+    99: "Thunderstorm with heavy hail",
 }
 
 
@@ -51,7 +84,7 @@ def extract_data(cities_info, cities, base_url, params, start_date, end_date):
 
 
 extracted_data = extract_data(
-    cities_info, cities, base_url, params, "2025-07-01", "2025-07-02"
+    cities_info, cities, historic_data_base_url, params, "2025-07-01", "2025-07-02"
 )
 
 pprint(extracted_data)
@@ -60,11 +93,19 @@ pprint(extracted_data)
 
 
 class DataTransformer:
-    def __init__(self, response_historic_data, cities, cities_info):
+
+    RECORD_TYPE = {1: "Historic", 2: "Forecast"}
+
+    def __init__(self, response_historic_data, cities, cities_info, record_type):
+        self.record_type = record_type
+
         self.response_histiric_data = response_historic_data
+
         self.cities = cities
         self.cities_info = cities_info
+
         self.dfs = []  # list of dataframes for individual cities
+
         self.combined_dataframe = 0  # combined dataframe of all cities
         self.transformed_dataframe = 0
 
@@ -107,7 +148,8 @@ class DataTransformer:
     def transform_combined_dataframe(self):
         df = self.combined_dataframe
         df = df.withColumn("temperature_f", (col("temperature_c") * 9 / 5) + 32)
-        df = df.withColumn("wind_speed_m_s", col("wind_speed_km_h") / 3.6)
+        df = df.withColumn("wind_speed_m_s", round(col("wind_speed_km_h") / 3.6, 2))
+
         df = df.select(
             "city_id",
             "date",
@@ -118,10 +160,13 @@ class DataTransformer:
             "weather_code",
         )
 
+        record_type = DataTransformer.RECORD_TYPE[self.record_type]
+        df = df.withColumn("record_type", lit(record_type))
+
         self.transformed_dataframe = df
 
 
-data_transformer = DataTransformer(extracted_data, cities, cities_info)
+data_transformer = DataTransformer(extracted_data, cities, cities_info, 1)
 
 data_transformer.create_historic_dataframes()
 data_transformer.combine_dataframes()
@@ -129,5 +174,5 @@ data_transformer.transform_combined_dataframe()
 
 data_transformer.dfs[0].show(3)
 data_transformer.dfs[2].show(3)
-#data_transformer.combined_dataframe.show()
+# data_transformer.combined_dataframe.show()
 data_transformer.transformed_dataframe.show(50, truncate=False)
