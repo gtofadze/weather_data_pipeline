@@ -35,5 +35,5 @@ def execute_data_pipeline(record_type, start_date, end_date):
     data_transformer.transformed_dataframe.show(50, truncate=False)
 
 
-execute_data_pipeline(1) # for historic data
-execute_data_pipeline(2) # for forecast data
+execute_data_pipeline(1, start_date, end_date) # for historic data
+execute_data_pipeline(2, start_date, end_date) # for forecast data
