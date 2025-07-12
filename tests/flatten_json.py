@@ -53,11 +53,13 @@ json2 = {
 def flatten_json(x):
     result = {}
 
-    def inner(x, parent_key = None):
+    def inner(x, parent_key='', dot='.'):
+
         if isinstance(x, dict):
             for key in x:
                 item = x[key]
-                result[key] = inner(x, parent_key=key)
+                new_key = f'{parent_key}{dot}{key}'
+                inner(x, parent_key=new_key)
             return
         
         elif isinstance(x, list):
@@ -66,3 +68,4 @@ def flatten_json(x):
             return
         
         elif isinstance(x, ):
+            return
