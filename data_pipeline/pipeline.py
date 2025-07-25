@@ -1,5 +1,6 @@
 from extract import extract_data
 from transform import DataTransformer
+from spark_session import get_spark
 from parameters import (
     params,
     cities_info,
@@ -8,10 +9,12 @@ from parameters import (
     forecast_data_base_url,
 )
 
+spark = get_spark()
+
 start_date = "2025-07-01"
 end_date = "2025-07-02"
 
-def execute_data_pipeline(record_type, start_date, end_date):
+def execute_data_pipeline(spark, record_type, start_date, end_date):
 
     # for historic record type enter 1 for forecast enter 2 in "record_type" variable
 
@@ -24,7 +27,7 @@ def execute_data_pipeline(record_type, start_date, end_date):
         cities_info, cities, base_url, params, start_date, end_date
     )
 
-    data_transformer = DataTransformer(extracted_data, cities, cities_info, record_type)
+    data_transformer = DataTransformer(spark, extracted_data, cities, cities_info, record_type)
 
     data_transformer.create_dataframes()
     data_transformer.combine_dataframes()
@@ -35,5 +38,5 @@ def execute_data_pipeline(record_type, start_date, end_date):
     data_transformer.transformed_dataframe.show(50, truncate=False)
 
 
-execute_data_pipeline(1, start_date, end_date) # for historic data
-execute_data_pipeline(2, start_date, end_date) # for forecast data
+execute_data_pipeline(spark, 1, start_date, end_date) # for historic data
+execute_data_pipeline(spark, 2, start_date, end_date) # for forecast data

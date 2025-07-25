@@ -1,2 +1,3 @@
-def load_data():
+def load_data(df):
+    
     return

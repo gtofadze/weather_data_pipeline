@@ -7,7 +7,9 @@ class DataTransformer:
 
     RECORD_TYPE = {1: "Historic", 2: "Forecast"}
 
-    def __init__(self, response_data, cities, cities_info, record_type):
+    def __init__(self, spark, response_data, cities, cities_info, record_type):
+        self.spark = spark
+
         self.record_type = record_type
 
         self.response_data = response_data
@@ -21,6 +23,7 @@ class DataTransformer:
         self.transformed_dataframe = 0
 
     def create_dataframes(self):
+        spark = self.spark
         data = self.response_data
         cities = self.cities
         cities_info = self.cities_info
@@ -73,5 +76,12 @@ class DataTransformer:
 
         record_type = DataTransformer.RECORD_TYPE[self.record_type]
         df = df.withColumn("record_type", lit(record_type))
+
+        self.transformed_dataframe = df
+
+    def convert_datetime_strings(self):
+        df = self.transformed_dataframe
+
+        df = df.withcolumn
 
         self.transformed_dataframe = df
