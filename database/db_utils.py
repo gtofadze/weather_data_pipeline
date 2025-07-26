@@ -27,18 +27,21 @@ db_config = {
     "password": cleared_lines[3],
 }
 
-def establish_db_connection(db_config, dbname='postgres'):
+
+def establish_db_connection(db_config, dbname="postgres"):
     conn = psycopg2.connect(**db_config, dbname=dbname)
     cur = conn.cursor()
     return conn, cur
+
 
 def close_db_connection(conn, cur):
     cur.close()
     conn.close()
 
+
 # check if database exists
 def check_if_db_exists():
-    conn = psycopg2.connect(**db_config, dbname='postgres')
+    conn = psycopg2.connect(**db_config, dbname="postgres")
 
     conn.autocommit = True
     cur = conn.cursor()
@@ -55,8 +58,8 @@ def check_if_db_exists():
 
 # Creating database for weather data
 def create_database():
-    
-    conn = psycopg2.connect(**db_config, dbname='postgres')
+
+    conn = psycopg2.connect(**db_config, dbname="postgres")
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
     cur = conn.cursor()
@@ -70,7 +73,7 @@ def create_database():
 # Creating tables for weather data
 def create_tables():
 
-    conn, cur = establish_db_connection(db_config, dbname='postgres')
+    conn, cur = establish_db_connection(db_config, dbname="weather")
 
     cur.execute(
         """CREATE TABLE IF NOT EXISTS weather_data(
@@ -107,7 +110,7 @@ def create_tables():
 
 def populate_dimensions_data(cities_info, weather_codes):
 
-    conn, cur = establish_db_connection(db_config, dbname='postgres')
+    conn, cur = establish_db_connection(db_config, dbname="weather")
 
     for city in cities_info:
         id = cities_info[city]["id"]

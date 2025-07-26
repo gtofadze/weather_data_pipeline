@@ -9,5 +9,3 @@ def load_data(df, cur, conn, tablename):
     execute_values(cur, query, data)
 
     conn.commit()
-    
-    return

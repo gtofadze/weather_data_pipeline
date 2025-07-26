@@ -46,7 +46,7 @@ def execute_data_pipeline(spark, record_type, start_date, end_date):
 
     data_to_load = data_transformer.transform_combined_dataframe
 
-    cur, conn = establish_db_connection(db_config, dbname='postgres')
+    cur, conn = establish_db_connection(db_config, dbname='weather')
 
     load_data(data_to_load, cur, conn, 'weather_data')
 
