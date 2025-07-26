@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import lit, col, round
+from pyspark.sql.functions import lit, col, round, to_timestamp
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -7,8 +7,7 @@ class DataTransformer:
 
     RECORD_TYPE = {1: "Historic", 2: "Forecast"}
 
-    def __init__(self, spark, response_data, cities, cities_info, record_type):
-        self.spark = spark
+    def __init__(self, response_data, cities, cities_info, record_type):
 
         self.record_type = record_type
 
@@ -23,7 +22,6 @@ class DataTransformer:
         self.transformed_dataframe = 0
 
     def create_dataframes(self):
-        spark = self.spark
         data = self.response_data
         cities = self.cities
         cities_info = self.cities_info
@@ -82,6 +80,6 @@ class DataTransformer:
     def convert_datetime_strings(self):
         df = self.transformed_dataframe
 
-        df = df.withcolumn
+        df = df.withcolumn('date', to_timestamp(col('time'), 'yyyy-MM-ddTHH:mm'))
 
         self.transformed_dataframe = df
