@@ -80,6 +80,6 @@ class DataTransformer:
     def convert_datetime_strings(self):
         df = self.transformed_dataframe
 
-        df = df.withcolumn('date', to_timestamp(col('time'), 'yyyy-MM-ddTHH:mm'))
+        df = df.withColumn('date', to_timestamp(col('date'), 'yyyy-MM-ddTHH:mm'))
 
         self.transformed_dataframe = df

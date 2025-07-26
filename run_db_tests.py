@@ -8,7 +8,7 @@ def delete_db(db_config, dbname):
     conn.autocommit = True  # Required to execute DROP DATABASE outside a transaction
 
     cur = conn.cursor()
-    cur.execute("DROP DATABASE IF EXISTS my_database_name")
+    cur.execute("DROP DATABASE IF EXISTS weather")
 
     cur.close()
     conn.close()
