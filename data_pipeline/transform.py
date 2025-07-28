@@ -1,5 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import lit, col, round, to_timestamp
+from psycopg2.extras import execute_values
+from database import establish_db_connection, close_db_connection, db_config
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -38,7 +40,7 @@ class DataTransformer:
             zipped_data_for_df = zip(date, temperature, weather_code, wind_speed)
             schema = ["date", "temperature_c", "weather_code", "wind_speed_km_h"]
 
-            # create dataframes and add city id culumn
+            # create dataframes and add city id column
             df = spark.createDataFrame(zipped_data_for_df, schema)
             df = df.withColumn("city_id", lit(id))
             df = df.select(
@@ -83,3 +85,18 @@ class DataTransformer:
         df = df.withColumn('date', to_timestamp(col('date'), 'yyyy-MM-ddTHH:mm'))
 
         self.transformed_dataframe = df
+
+    def load(self, dbname, tablename):
+        df = self.transformed_dataframe
+
+        conn, cur = establish_db_connection(db_config, dbname=dbname)
+
+        rows = df.collect()
+        data = [tuple(row) for row in rows]
+
+        query = f"INSERT INTO {tablename} (city_id, date, temperature_c, temperature_f, wind_speed_km_h, wind_speed_m_s, weather_code) VALUES %s"
+        execute_values(cur, query, data)
+
+        conn.commit()
+
+        close_db_connection(conn, cur)

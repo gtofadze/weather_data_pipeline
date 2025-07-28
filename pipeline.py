@@ -1,6 +1,4 @@
-from data_pipeline import extract_data
-from data_pipeline import DataTransformer
-from data_pipeline import load_data
+from data_pipeline import extract_data, DataTransformer
 from data_pipeline import (
     params,
     cities_info,
@@ -11,8 +9,6 @@ from data_pipeline import (
 )
 from database import (
     prepare_database,
-    establish_db_connection,
-    close_db_connection,
     db_config,
 )
 
@@ -31,7 +27,7 @@ def execute_data_pipeline(record_type, start_date, end_date):
     elif record_type == 2:
         base_url = forecast_data_base_url
 
-    delete_db(db_config, 'postgres')
+    delete_db(db_config, "postgres")
     prepare_database(cities_info, weather_code_map)
 
     extracted_data = extract_data(
@@ -43,19 +39,13 @@ def execute_data_pipeline(record_type, start_date, end_date):
     data_transformer.create_dataframes()
     data_transformer.combine_dataframes()
     data_transformer.transform_combined_dataframe()
-    #data_transformer.convert_datetime_strings()
+    # data_transformer.convert_datetime_strings()
 
     # data_transformer.dfs[0].show(3)
     # data_transformer.dfs[2].show(3)
     # data_transformer.transformed_dataframe.show(50, truncate=False)
 
-    data_to_load = data_transformer.transformed_dataframe
-
-    cur, conn = establish_db_connection(db_config, dbname="weather")
-
-    load_data(data_to_load, cur, conn, "weather_data")
-
-    close_db_connection(conn, cur)
+    data_transformer.load("weather", "weather_data")
 
 
 execute_data_pipeline(1, start_date, end_date)  # for historic data
