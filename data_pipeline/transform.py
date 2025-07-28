@@ -5,6 +5,7 @@ from database import establish_db_connection, close_db_connection, db_config
 
 spark = SparkSession.builder.getOrCreate()
 
+
 class DataTransformer:
 
     RECORD_TYPE = {1: "Historic", 2: "Forecast"}
@@ -82,7 +83,7 @@ class DataTransformer:
     def convert_datetime_strings(self):
         df = self.transformed_dataframe
 
-        df = df.withColumn('date', to_timestamp(col('date'), 'yyyy-MM-ddTHH:mm'))
+        df = df.withColumn("date", to_timestamp(col("date"), "yyyy-MM-dd'T'HH:mm"))
 
         self.transformed_dataframe = df
 
@@ -94,7 +95,7 @@ class DataTransformer:
         rows = df.collect()
         data = [tuple(row) for row in rows]
 
-        query = f"INSERT INTO {tablename} (city_id, date, temperature_c, temperature_f, wind_speed_km_h, wind_speed_m_s, weather_code) VALUES %s"
+        query = f"INSERT INTO {tablename} (city_id, date, temperature_c, temperature_f, wind_speed_km_h, wind_speed_m_s, weather_code, record_type) VALUES %s"
         execute_values(cur, query, data)
 
         conn.commit()

@@ -39,13 +39,13 @@ def execute_data_pipeline(record_type, start_date, end_date):
     data_transformer.create_dataframes()
     data_transformer.combine_dataframes()
     data_transformer.transform_combined_dataframe()
-    # data_transformer.convert_datetime_strings()
+    data_transformer.convert_datetime_strings()
 
     # data_transformer.dfs[0].show(3)
     # data_transformer.dfs[2].show(3)
-    # data_transformer.transformed_dataframe.show(50, truncate=False)
+    data_transformer.transformed_dataframe.show(10, truncate=False)
 
-    data_transformer.load("weather", "weather_data")
+    # data_transformer.load("weather", "weather_data")
 
 
 execute_data_pipeline(1, start_date, end_date)  # for historic data
