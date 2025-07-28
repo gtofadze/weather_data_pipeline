@@ -83,7 +83,8 @@ def create_tables():
                 temperature_f FLOAT,
                 wind_speed_km_h FLOAT,
                 wind_speed_m_s FLOAT,
-                weather_code INT
+                weather_code INT,
+                record_type VARCHAR(255)
                 )"""
     )
 
@@ -143,3 +144,4 @@ def prepare_database(cities_info, weather_codes):
         create_database()
         create_tables()
         populate_dimensions_data(cities_info, weather_codes)
+    return
