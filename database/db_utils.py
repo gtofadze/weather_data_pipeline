@@ -76,19 +76,6 @@ def create_tables():
     conn, cur = establish_db_connection(db_config, dbname="weather")
 
     cur.execute(
-        """CREATE TABLE IF NOT EXISTS weather_data(
-                city_id INT,
-                date TIMESTAMP,
-                temperature_c FLOAT,
-                temperature_f FLOAT,
-                wind_speed_km_h FLOAT,
-                wind_speed_m_s FLOAT,
-                weather_code INT,
-                record_type VARCHAR(255)
-                )"""
-    )
-
-    cur.execute(
         """CREATE TABLE IF NOT EXISTS cities_info(
         id INT PRIMARY KEY,
         name VARCHAR(255),
@@ -101,6 +88,19 @@ def create_tables():
         """CREATE TABLE IF NOT EXISTS weather_codes(
                 code INT PRIMARY KEY,
                 description VARCHAR(255)
+                )"""
+    )
+
+    cur.execute(
+        """CREATE TABLE IF NOT EXISTS weather_data(
+                city_id INT REFERENCES cities_info(id),
+                date TIMESTAMP,
+                temperature_c FLOAT,
+                temperature_f FLOAT,
+                wind_speed_km_h FLOAT,
+                wind_speed_m_s FLOAT,
+                weather_code INT REFERENCES weather_codes(code),
+                record_type VARCHAR(255)
                 )"""
     )
 

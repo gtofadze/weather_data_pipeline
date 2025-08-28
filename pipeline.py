@@ -27,7 +27,6 @@ def execute_data_pipeline(record_type, start_date, end_date):
     elif record_type == 2:
         base_url = forecast_data_base_url
 
-    #delete_db(db_config, "postgres")
     prepare_database(cities_info, weather_code_map)
 
     extracted_data = extract_data(
@@ -47,6 +46,6 @@ def execute_data_pipeline(record_type, start_date, end_date):
 
     data_transformer.load("weather", "weather_data")
 
-
+#delete_db(db_config, "postgres")
 execute_data_pipeline(1, start_date, end_date)  # for historic data
 execute_data_pipeline(2, start_date, end_date)  # for forecast data
