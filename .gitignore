@@ -1,4 +1,5 @@
 weather_pipeline_env/
 Project_info.pptx
 __pycache__/
+.env
 db_details.txt
