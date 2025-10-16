@@ -1,20 +1,20 @@
 import pandas as pd
+import numpy as np
 
 
 class Transform:
 
-    def __init__(self, response_data, cities_info):
+    def __init__(self, response_data):
 
         self.response_data = response_data
-        self.cities_info = cities_info
-        self.dataframes = []  # list of dataframes for individual cities
-        self.combined_dataframe = None  # combined dataframe of all cities
         self.transformed_dataframe = None
 
     def create_dataframes(self):
 
         response_data = self.response_data
         for id in response_data:
+
+            dataframes = []
 
             date = response_data[id]["hourly"]["time"]
             temperature = response_data[id]["hourly"]["temperature_2m"]
@@ -31,4 +31,48 @@ class Transform:
             )
 
             df["id"] = id
-            self.dataframes.append(df)
+            dataframes.append(df)
+
+            return dataframes
+
+    def transform(self):
+
+        dataframes = self.create_dataframes()
+        df = pd.concat(dataframes, ignore_index=True)
+        df["wind_speed_m_s"] = df["wind_speed_km_h"] / 3.6
+        df["temperature_f"] = (df["temperature_c"] * 9 / 5) + 32
+        df["date"] = pd.to_datetime(df["date"])
+
+        conditions = [
+            df["wind_speed_m_s"] <= 0.2,
+            df["wind_speed_m_s"] <= 1.5,
+            df["wind_speed_m_s"] <= 3.3,
+            df["wind_speed_m_s"] <= 5.4,
+            df["wind_speed_m_s"] <= 7.9,
+            df["wind_speed_m_s"] <= 10.7,
+            df["wind_speed_m_s"] <= 13.8,
+            df["wind_speed_m_s"] <= 17.1,
+            df["wind_speed_m_s"] <= 20.7,
+            df["wind_speed_m_s"] <= 24.4,
+            df["wind_speed_m_s"] <= 28.4,
+            df["wind_speed_m_s"] <= 32.6,
+            df["wind_speed_m_s"] > 32.6,
+        ]
+
+        choices = list(range(13))
+
+        df["beaufort_scale"] = np.select(conditions, choices, default=None)
+
+        columns_after_reordering = [
+            "city_id",
+            "date",
+            "temperature_c",
+            "temperature_f",
+            "wind_speed_km_h",
+            "wind_speed_m_s",
+            "weather_code",
+        ]
+
+        df = df[columns_after_reordering]
+
+        self.transformed_dataframe = df

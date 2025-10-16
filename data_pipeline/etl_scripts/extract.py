@@ -1,27 +1,12 @@
 import requests
 
 
-def extract_data(start_date, end_date, cities_info, record_type=1):
+def extract_data(start_date, end_date, cities_info, record_type='historic'):
 
-    params = {
-        "start_date": start_date,
-        "end_date": end_date,
-        "longitude": None,
-        "latitude": None,
-        "hourly": ["temperature_2m", "weather_code", "wind_speed_10m"],
-        "timezone": "GMT",
-        "temporal_resolution": "hourly_6",
+    base_urls = {
+        "historic": "https://archive-api.open-meteo.com/v1/archive",
+        "forecast": "https://api.open-meteo.com/v1/forecast",
     }
-
-    historic_data_base_url = "https://archive-api.open-meteo.com/v1/archive"
-    forecast_data_base_url = "https://api.open-meteo.com/v1/forecast"
-
-    if record_type == 1:
-        base_url = historic_data_base_url
-    elif record_type == 2:
-        base_url = forecast_data_base_url
-    else:
-        raise ValueError('record_type must be either 1 or 2')
 
     extracted_data = {}
 
@@ -30,12 +15,17 @@ def extract_data(start_date, end_date, cities_info, record_type=1):
         lon = city["lon"]
         lat = city["lat"]
 
-        params["lon"] = lon
-        params["lat"] = lat
-        params["start_date"] = start_date
-        params["end_date"] = end_date
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "longitude": lon,
+            "latitude": lat,
+            "hourly": ["temperature_2m", "weather_code", "wind_speed_10m"],
+            "timezone": "GMT",
+            "temporal_resolution": "hourly_6",
+        }
 
-        r = requests.get(base_url, params=params)
+        r = requests.get(base_urls[record_type], params=params)
         r = r.json()
 
         extracted_data[id] = r
