@@ -3,7 +3,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 
 def establish_db_connection(
-    db_config, dbname="postgres", autocommit=False, isolation_level_autocommit=False
+    dbname="postgres", autocommit=False, isolation_level_autocommit=False, **db_config
 ):
     conn = psycopg2.connect(**db_config, dbname=dbname)
 

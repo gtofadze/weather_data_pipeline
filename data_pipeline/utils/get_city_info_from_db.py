@@ -1,6 +1,5 @@
 
-def get_city_info_from_db(con, cur):
-    data = cur.execute("SELECT * FROM cities_info")
+def get_city_info_from_db(cur):
+    cur.execute("SELECT * FROM cities_info")
 
-
-    return data
+    return cur.fetchall()
