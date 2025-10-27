@@ -30,7 +30,7 @@ class Transform:
                 }
             )
 
-            df["id"] = id
+            df["city_id"] = id
             dataframes.append(df)
 
             return dataframes
@@ -70,6 +70,7 @@ class Transform:
             "temperature_f",
             "wind_speed_km_h",
             "wind_speed_m_s",
+            "beaufort_scale",
             "weather_code",
         ]
 
