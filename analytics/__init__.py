@@ -1,2 +1,1 @@
-from .get_data import get_data_from_db
-from .create_dfs import create_dfs
+from .get_data_for_analytics import get_data_from_db
