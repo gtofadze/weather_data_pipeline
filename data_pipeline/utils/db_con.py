@@ -9,16 +9,12 @@ def establish_db_connection(
 ):
 
     load_dotenv()
-    HOST = os.getenv("HOST")
-    USER = os.getenv("USER")
-    PORT = os.getenv("PORT")
-    PASSWORD = os.getenv("PASSWORD")
 
     db_config = {
-        "user": USER,
-        "password": PASSWORD,
-        "host": HOST,
-        "port": PORT
+        "user": os.getenv("USER"),
+        "password": os.getenv("PASSWORD"),
+        "host": os.getenv("HOST"),
+        "port": os.getenv("PORT")
     }
 
     conn = psycopg2.connect(**db_config, dbname=dbname)

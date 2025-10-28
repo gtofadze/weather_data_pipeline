@@ -56,7 +56,7 @@ class Transform:
             df["wind_speed_m_s"] <= 24.4,
             df["wind_speed_m_s"] <= 28.4,
             df["wind_speed_m_s"] <= 32.6,
-            df["wind_speed_m_s"] > 32.6,
+            df["wind_speed_m_s"] > 32.6
         ]
 
         choices = list(range(13))
