@@ -10,4 +10,4 @@ class analytics_transformer:
         self.weather_codes_df = weather_codes_df
         self.beaufort_scale_df = beaufort_scale_df
 
-    #continue here
+    # continue here
